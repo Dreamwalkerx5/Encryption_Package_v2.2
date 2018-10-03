@@ -10,26 +10,26 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
 /**
- * A class to make more easy and simple the encrypt routines, this is the core of Encryption.Encryption library
+ * A class to make easy and simple the encrypt routines, this is the core of Encryption.Encryption library
  */
 public class Encryption {
 
     /**
      * The Builder used to create the Encryption.Encryption instance and that contains the information about
-     * encryption specifications, this instance need to be private and careful managed
+     * encryption specifications, this instance needs to be private and carefully managed
      */
     private final Builder mBuilder;
 
     /**
      * The private and unique constructor, you should use the Encryption.Encryption.Builder to build your own
-     * instance or get the default proving just the sensible information about encryption
+     * instance or get the default providing just the sensible information about encryption
      */
     private Encryption(Builder builder) {
         mBuilder = builder;
     }
 
     /**
-     * @return an default encryption instance or {@code null} if occur some Exception, you can
+     * @return an default encryption instance or {@code null} if some Exception occurs, you can
      * create yur own Encryption.Encryption instance using the Encryption.Encryption.Builder
      */
     public static Encryption getDefault(String key, String salt, byte[] iv) {
@@ -101,7 +101,7 @@ public class Encryption {
 
     /**
      * This is a sugar method that calls encrypt method in background, it is a good idea to use this
-     * one instead the default method because encryption can take several time and with this method
+     * one instead of the default method because encryption can take time and with this method
      * the process occurs in a AsyncTask, other advantage is the Callback with separated methods,
      * one for success and other for the exception
      *
@@ -110,18 +110,15 @@ public class Encryption {
      */
     public void encryptAsync(final String data, final Callback callback) {
         if (callback == null) return;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String encrypt = encrypt(data);
-                    if (encrypt == null) {
-                        callback.onError(new Exception("Encrypt return null, it normally occurs when you send a null data"));
-                    }
-                    callback.onSuccess(encrypt);
-                } catch (Exception e) {
-                    callback.onError(e);
+        new Thread(() -> {
+            try {
+                String encrypt = encrypt(data);
+                if (encrypt == null) {
+                    callback.onError(new Exception("Encrypt return null, it normally occurs when you send a null data"));
                 }
+                callback.onSuccess(encrypt);
+            } catch (Exception e) {
+                callback.onError(e);
             }
         }).start();
     }
@@ -187,7 +184,7 @@ public class Encryption {
 
     /**
      * This is a sugar method that calls decrypt method in background, it is a good idea to use this
-     * one instead the default method because decryption can take several time and with this method
+     * one instead the default method because decryption can take time and with this method
      * the process occurs in a AsyncTask, other advantage is the Callback with separated methods,
      * one for success and other for the exception
      *
@@ -196,18 +193,15 @@ public class Encryption {
      */
     public void decryptAsync(final String data, final Callback callback) {
         if (callback == null) return;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String decrypt = decrypt(data);
-                    if (decrypt == null) {
-                        callback.onError(new Exception("Decrypt return null, it normally occurs when you send a null data"));
-                    }
-                    callback.onSuccess(decrypt);
-                } catch (Exception e) {
-                    callback.onError(e);
+        new Thread(() -> {
+            try {
+                String decrypt = decrypt(data);
+                if (decrypt == null) {
+                    callback.onError(new Exception("Decrypt return null, it normally occurs when you send a null data"));
                 }
+                callback.onSuccess(decrypt);
+            } catch (Exception e) {
+                callback.onError(e);
             }
         }).start();
     }
@@ -253,7 +247,7 @@ public class Encryption {
     }
 
     /**
-     * When you encrypt or decrypt in callback mode you get noticed of result using this interface
+     * When you encrypt or decrypt in callback mode you get notified of result using this interface
      */
     public interface Callback {
 
